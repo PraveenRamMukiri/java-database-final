@@ -1,40 +1,93 @@
-package com.project.code.controller;
+package com.project.code.model;
 
-import com.project.code.model.OrderDetails;
-import org.springframework.web.bind.annotation.*;
-import java.util.*;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
-@RestController
-@RequestMapping("/api/orders")
-public class StoreController {
+@Entity
+@Table(name = "order_details")
+public class OrderDetails {
 
-    private final List<OrderDetails> orders = new ArrayList<>();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @GetMapping
-    public List<OrderDetails> getAllOrders() {
-        return orders;
+    private String productName;
+
+    private int quantity;
+
+    private double price;
+
+    @Column(name = "order_date")
+    private LocalDateTime orderDate;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
+    @ManyToOne
+    @JoinColumn(name = "store_id")
+    private Store store;
+
+    public OrderDetails() {
     }
 
-    @PostMapping
-    public OrderDetails addOrder(@RequestBody OrderDetails order) {
-        orders.add(order);
-        return order;
+    public OrderDetails(String productName, int quantity,
+                        double price) {
+        this.productName = productName;
+        this.quantity = quantity;
+        this.price = price;
+        this.orderDate = LocalDateTime.now();
     }
 
-    @GetMapping("/{id}")
-    public OrderDetails getOrder(@PathVariable int id) {
-        if (id < 0 || id >= orders.size()) {
-            throw new NoSuchElementException("Order not found");
-        }
-        return orders.get(id);
+    public Long getId() {
+        return id;
     }
 
-    @DeleteMapping("/{id}")
-    public String deleteOrder(@PathVariable int id) {
-        if (id < 0 || id >= orders.size()) {
-            throw new NoSuchElementException("Order not found");
-        }
-        orders.remove(id);
-        return "Order deleted successfully";
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public LocalDateTime getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Store getStore() {
+        return store;
+    }
+
+    public void setStore(Store store) {
+        this.store = store;
     }
 }
