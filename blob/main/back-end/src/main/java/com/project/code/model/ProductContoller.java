@@ -1,40 +1,43 @@
-package com.project.code.controller;
+package com.project.code.Controller;
 
+import com.project.code.model.Product;
+import com.project.code.Repo.ProductRepository;
+import com.project.code.Repo.InventoryRepository;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/product")
 public class ProductController {
 
-    private final List<Map<String, Object>> products = new ArrayList<>();
+    private final ProductRepository productRepository;
+    private final InventoryRepository inventoryRepository;
 
-    @GetMapping
-    public List<Map<String, Object>> getAllProducts() {
-        return products;
-    }
-
-    @PostMapping
-    public Map<String, Object> addProduct(
-            @RequestBody Map<String, Object> product) {
-        products.add(product);
-        return product;
+    public ProductController(
+            ProductRepository productRepository,
+            InventoryRepository inventoryRepository) {
+        this.productRepository = productRepository;
+        this.inventoryRepository = inventoryRepository;
     }
 
     @GetMapping("/{id}")
-    public Map<String, Object> getProduct(@PathVariable int id) {
-        if (id < 0 || id >= products.size()) {
-            throw new NoSuchElementException("Product not found");
-        }
-        return products.get(id);
+    public ResponseEntity<Product> getProduct(@PathVariable Long id) {
+        return productRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public String deleteProduct(@PathVariable int id) {
-        if (id < 0 || id >= products.size()) {
-            throw new NoSuchElementException("Product not found");
+    public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
+
+        if (!productRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
         }
-        products.remove(id);
-        return "Product deleted successfully";
+
+        inventoryRepository.deleteByProductId(id);
+        productRepository.deleteById(id);
+
+        return ResponseEntity.ok("Product and inventory deleted successfully");
     }
 }
