@@ -17,12 +17,22 @@ public class OrderDetails {
 
     private double price;
 
+    @Column(name = "order_date")
     private LocalDateTime orderDate;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
+    @ManyToOne
+    @JoinColumn(name = "store_id")
+    private Store store;
 
     public OrderDetails() {
     }
 
-    public OrderDetails(String productName, int quantity, double price) {
+    public OrderDetails(String productName, int quantity,
+                        double price) {
         this.productName = productName;
         this.quantity = quantity;
         this.price = price;
@@ -63,5 +73,21 @@ public class OrderDetails {
 
     public void setOrderDate(LocalDateTime orderDate) {
         this.orderDate = orderDate;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Store getStore() {
+        return store;
+    }
+
+    public void setStore(Store store) {
+        this.store = store;
     }
 }
