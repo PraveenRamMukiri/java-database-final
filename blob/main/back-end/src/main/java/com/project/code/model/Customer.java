@@ -1,9 +1,10 @@
-
 package com.project.code.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "customers")
@@ -20,6 +21,11 @@ public class Customer {
     @NotBlank(message = "Email is required")
     @Column(unique = true)
     private String email;
+
+    @OneToMany(mappedBy = "customer",
+               fetch = FetchType.EAGER,
+               cascade = CascadeType.ALL)
+    private List<OrderDetails> orders = new ArrayList<>();
 
     public Customer() {
     }
@@ -47,5 +53,13 @@ public class Customer {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<OrderDetails> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<OrderDetails> orders) {
+        this.orders = orders;
     }
 }
