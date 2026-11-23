@@ -14,17 +14,15 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Name is required")
+    @NotBlank
     private String name;
 
-    @Email(message = "Enter a valid email")
-    @NotBlank(message = "Email is required")
+    @Email
+    @NotBlank
     @Column(unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "customer",
-               fetch = FetchType.EAGER,
-               cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     private List<OrderDetails> orders = new ArrayList<>();
 
     public Customer() {
